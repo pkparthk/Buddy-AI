@@ -3,6 +3,9 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
 
+const API_URL =
+  import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api/chat";
+
 const BuddyAI: React.FC = () => {
   const [isListening, setIsListening] = useState(false);
   const [conversation, setConversation] = useState<
@@ -93,12 +96,12 @@ const BuddyAI: React.FC = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/chat", {
+      const response = await fetch(API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query: messageToSend }),
+        body: JSON.stringify({ message: messageToSend }),
       });
 
       if (!response.ok) {
