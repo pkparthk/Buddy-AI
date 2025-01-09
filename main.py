@@ -4,11 +4,28 @@ import webbrowser
 import datetime
 import pyttsx3
 from model import call_gemini_ai  # Ensure the function call_gemini_ai is correctly defined in model.py
+import threading  # Import the threading module
 
 chatStr = ""  # Initialize the global chat string
 
 # Initialize the pyttsx3 engine globally
 engine = pyttsx3.init()
+
+# Define a lock to prevent multiple threads from executing runAndWait at the same time
+speech_lock = threading.Lock()
+
+def speak(text):
+    """
+    Uses pyttsx3 for text-to-speech functionality.
+    This method speaks the entire response asynchronously.
+    """
+    def _speak():
+        with speech_lock:  # Ensures only one thread runs the speech synthesis at a time
+            engine.say(text)
+            engine.runAndWait()  # Wait for the speech to complete before moving on
+
+    # Run the speak function in a separate thread to avoid blocking
+    threading.Thread(target=_speak).start()
 
 def chat(query):
     """
@@ -27,15 +44,15 @@ def chat(query):
         # Update the conversation string with the reply after speaking
         chatStr += f"{reply}\n"
         
-        # Print and speak the response
+        # Print and speak the response only once
         print(f"Buddy AI: {reply}")  # Display the answer as text in the console
-        speak(reply)
+        speak(reply)  # Call speak here only once
         
-        return reply
+        return reply  # Return the AI reply for use in Flask response
     except Exception as e:
         print(f"Error: {e}")
         speak("Sorry, an error occurred.")
-        return "Sorry, an error occurred."
+        return "Sorry, an error occurred."  # Return error message to Flask
 
 def ai(prompt):
     """
@@ -50,23 +67,15 @@ def ai(prompt):
             with open(filename, "w") as f:
                 f.write(f"Buddy response for Prompt: {prompt}\n*************************\n\n{response}")
             
-            # Print and speak the response
+            # Print and speak the response only once
             print(f"Buddy AI: {response}")  # Display the answer as text in the console
-            speak(response)
+            speak(response)  # Call speak here only once
         else:
             print("Failed to get a response from Gemini AI.")
             speak("Sorry, I couldn't generate a response.")
     except Exception as e:
         print(f"Error: {e}")
         speak("Sorry, an error occurred while generating the response.")
-
-def speak(text):
-    """
-    Uses pyttsx3 for text-to-speech functionality.
-    This method speaks the entire response synchronously.
-    """
-    engine.say(text)
-    engine.runAndWait()  # Wait for the speech to complete before moving on
 
 def takeCommand():
     """
@@ -96,48 +105,48 @@ def process_query(query):
         # Check if the query is a command to open a website
         sites = [["youtube", "https://www.youtube.com"], ["wikipedia", "https://www.wikipedia.com"], ["google", "https://www.google.com"]]
         for site in sites:
-            if f"open {site[0]}" in query:
+            if f"open {site[0]}" in query.lower():  # Case-insensitive matching
                 speak(f"Opening {site[0]} sir...")
                 webbrowser.open(site[1])
+                return "Opening website..."  # Return a response here
     
     elif "the time" in query:
         # Check for time query
         hour = datetime.datetime.now().strftime("%H")
         minute = datetime.datetime.now().strftime("%M")
         speak(f"Sir, the time is {hour} hours and {minute} minutes.")
-
-    elif "open facetime" in query:
-        os.system(f"open /System/Applications/FaceTime.app")
-
-    # elif "open pass" in query:
-    #     os.system(f"open /Applications/Passky.app")
-
+        return f"The time is {hour}:{minute}"  # Return the time as a string
+    
     elif "buddy quit" in query:
         speak("Goodbye!")
         exit()
-
+    
     elif "reset chat" in query:
         global chatStr
         chatStr = ""
         speak("Chat has been reset.")
-
-    elif "using artificial intelligence" in query:
-        ai(prompt=query)
-
+        return "Chat has been reset."
+    
     elif "shutdown" in query or "exit" in query:
         speak("Shutting down now. Goodbye!")
         print("Shutting down...")
         exit()
-
+    
     else:
         # For other queries, chat with Gemini AI
         print("Chatting with Buddy AI...")
-        chat(query)
+        return chat(query)  # Make sure chat returns a response
 
-if __name__ == '__main__':
-    print("Welcome to Buddy A.I")
-    speak("Buddy is now active.")
-    
-    while True:
-        query = takeCommand().lower()
-        process_query(query)
+def start_listening():
+    """
+    This function starts listening for voice input, sends the input to `process_query`, 
+    and automatically stops the listening process after sending.
+    """
+    print("Started listening for voice input...")
+    query = takeCommand()  # Get the user's voice input
+    if query:
+        print("Processing query...")
+        response = process_query(query)  # Process the query (i.e., chat or other commands)
+        print(f"Response from Buddy AI: {response}")
+    else:
+        print("No input received, stopping listening.")
