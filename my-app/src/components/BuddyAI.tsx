@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { ScrollArea } from "./ui/scroll-area";
 
 declare global {
   interface Window {
@@ -6,40 +9,38 @@ declare global {
     webkitSpeechRecognition: any;
   }
 }
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { ScrollArea } from "./ui/scroll-area";
-
-
-
+// Define the API_URL for backend communication (you can modify this for production)
 const API_URL =
   import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api/chat";
 
+  // const API_URL = "http://localhost:5000/api/chat";
+    
 const BuddyAI: React.FC = () => {
   const [isListening, setIsListening] = useState(false);
   const [conversation, setConversation] = useState<
-    {
-      role: "user" | "ai";
-      content: string;
-    }[]
+    { role: "user" | "ai"; content: string }[]
   >([]);
   const [currentInput, setCurrentInput] = useState("");
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   // Speech recognition setup
   const recognition = useRef<null | (typeof window)["SpeechRecognition"]>(null);
-
   useEffect(() => {
     if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
       const SpeechRecognition =
-        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        window.SpeechRecognition || window.webkitSpeechRecognition;
       recognition.current = new SpeechRecognition();
       recognition.current.continuous = false; // Stop after recognizing one input
       recognition.current.interimResults = false; // No interim results
 
-      recognition.current.onresult = (event: { results: Iterable<unknown> | ArrayLike<unknown>; }) => {
+      recognition.current.onresult = (event: {
+        results: Iterable<unknown> | ArrayLike<unknown>;
+      }) => {
         const transcript = Array.from(event.results)
-          .map((result: any) => (result[0] as SpeechRecognitionAlternative).transcript)
+          .map(
+            (result: any) =>
+              (result[0] as SpeechRecognitionAlternative).transcript
+          )
           .join("");
         setCurrentInput(transcript);
         handleSubmit(transcript); // Automatically submit when speech recognition ends
@@ -74,43 +75,14 @@ const BuddyAI: React.FC = () => {
       { role: "user", content: messageToSend },
     ]);
 
-    // Check if the message is an "open" command for websites
-    if (messageToSend.toLowerCase().includes("open")) {
-      const sites = [
-        ["youtube", "https://www.youtube.com"],
-        ["wikipedia", "https://www.wikipedia.com"],
-        ["google", "https://www.google.com"],
-        // Add more sites as needed
-      ];
-
-      for (const [site, url] of sites) {
-        if (messageToSend.toLowerCase().includes(site)) {
-          window.open(url, "_blank"); // Open the website in a new tab
-          setConversation((prev) => [
-            ...prev,
-            { role: "ai", content: `Opening ${site}...` },
-          ]);
-          speak(`Opening ${site}...`);
-          return; // Exit after opening the site
-        }
-      }
-
-      // If no known site was matched
-      setConversation((prev) => [
-        ...prev,
-        { role: "ai", content: "Sorry, I don't know how to open that site." },
-      ]);
-      speak("Sorry, I don't know how to open that site.");
-      return;
-    }
-
     try {
+      // Ensure the backend URL is correctly configured
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: messageToSend }),
+        body: JSON.stringify({ query: messageToSend }),
       });
 
       if (!response.ok) {
