@@ -2,30 +2,44 @@ import speech_recognition as sr
 import os
 import webbrowser
 import datetime
-import pyttsx3
+# import pyttsx3
+from gtts import gTTS
 from model import call_gemini_ai  # Ensure the function call_gemini_ai is correctly defined in model.py
 import threading  # Import the threading module
 
 chatStr = ""  # Initialize the global chat string
 
 # Initialize the pyttsx3 engine globally
-engine = pyttsx3.init()
+# engine = pyttsx3.init()
 
 # Define a lock to prevent multiple threads from executing runAndWait at the same time
 speech_lock = threading.Lock()
 
 def speak(text):
     """
-    Uses pyttsx3 for text-to-speech functionality.
+    Uses gTTS (Google Text-to-Speech) for text-to-speech functionality.
     This method speaks the entire response asynchronously.
     """
     def _speak():
-        with speech_lock:  # Ensures only one thread runs the speech synthesis at a time
-            engine.say(text)
-            engine.runAndWait()  # Wait for the speech to complete before moving on
+        tts = gTTS(text=text, lang='en')
+        tts.save("response.mp3")  # Save the speech to a file
+        os.system("mpg321 response.mp3")  # Play the audio file
 
     # Run the speak function in a separate thread to avoid blocking
     threading.Thread(target=_speak).start()
+
+# def speak(text):
+#     """
+#     Uses pyttsx3 for text-to-speech functionality.
+#     This method speaks the entire response asynchronously.
+#     """
+#     def _speak():
+#         with speech_lock:  # Ensures only one thread runs the speech synthesis at a time
+#             engine.say(text)
+#             engine.runAndWait()  # Wait for the speech to complete before moving on
+
+#     # Run the speak function in a separate thread to avoid blocking
+#     threading.Thread(target=_speak).start()
 
 def chat(query):
     """
