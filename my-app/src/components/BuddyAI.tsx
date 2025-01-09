@@ -1,7 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
+
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
+
+
 
 const API_URL =
   import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api/chat";
@@ -18,7 +27,7 @@ const BuddyAI: React.FC = () => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   // Speech recognition setup
-  const recognition = useRef<SpeechRecognition | null>(null);
+  const recognition = useRef<null | (typeof window)["SpeechRecognition"]>(null);
 
   useEffect(() => {
     if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {

@@ -1,13 +1,20 @@
-import React, { ReactNode } from "react";
+import { ReactNode, forwardRef } from "react";
 
 interface ScrollAreaProps {
   className?: string;
   children: ReactNode;
 }
 
-export const ScrollArea: React.FC<ScrollAreaProps> = ({
-  className = "",
-  children,
-}) => {
-  return <div className={`overflow-auto ${className}`}>{children}</div>;
-};
+const ScrollArea = forwardRef<HTMLDivElement, ScrollAreaProps>(
+  ({ className = "", children }: ScrollAreaProps, ref) => {
+    return (
+      <div className={`overflow-auto ${className}`} ref={ref}>
+        {children}
+      </div>
+    );
+  }
+);
+
+ScrollArea.displayName = "ScrollArea"; // Helps with debugging in React DevTools
+
+export { ScrollArea };
