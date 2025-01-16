@@ -6,8 +6,9 @@ import logging  # For logging
 
 # Initialize the Flask application
 app = Flask(__name__)
-# CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": ["http://localhost:5173", "https://buddy-ai-tfha.onrender.com"]}})
+
+# CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route('/api/chat', methods=['POST', 'OPTIONS'])
 def handle_chat():
