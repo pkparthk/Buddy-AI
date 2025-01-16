@@ -13,8 +13,11 @@ CORS(app, resources={r"/*": {"origins": ["http://localhost:5173", "https://buddy
 @app.route('/api/chat', methods=['POST', 'OPTIONS'])
 def handle_chat():
     if request.method == 'OPTIONS':
-        # Preflight request
-        return '', 200  # Respond with HTTP 200 OK for OPTIONS requests
+        response = jsonify({'message': 'Preflight check successful'})
+        response.headers.add("Access-Control-Allow-Origin", request.headers.get('Origin', '*'))
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        return response, 200
     
     try:
         data = request.json  # Parse incoming JSON data
@@ -31,6 +34,7 @@ def handle_chat():
         return jsonify({'response': response})
     
     except Exception as e:
+        logging.error(f"Error processing request: {str(e)}")
         return jsonify({'error': 'An error occurred', 'details': str(e)}), 500
 
 if __name__ == '__main__':
