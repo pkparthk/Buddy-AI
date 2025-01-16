@@ -6,6 +6,9 @@ import datetime
 from gtts import gTTS
 from model import call_gemini_ai  # Ensure the function call_gemini_ai is correctly defined in model.py
 import threading  # Import the threading module
+import pygame
+import tempfile
+import time
 
 chatStr = ""  # Initialize the global chat string
 
@@ -21,11 +24,47 @@ def speak(text):
     This method speaks the entire response asynchronously.
     """
     def _speak():
-        tts = gTTS(text=text, lang='en')
-        tts.save("response.mp3")  # Save the speech to a file
-        os.system("mpg321 response.mp3")  # Play the audio file
+        try:
+            # Generate speech using gTTS
+            tts = gTTS(text=text, lang='en')
 
-    # Run the speak function in a separate thread to avoid blocking
+            # Use a temporary file for storing the speech audio
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_file:
+                temp_file_path = temp_file.name
+                tts.save(temp_file_path)  # Save the speech to a temporary file
+
+            # Initialize pygame mixer
+            pygame.mixer.init()
+
+            # Load and play the audio file
+            pygame.mixer.music.load(temp_file_path)
+            pygame.mixer.music.play()
+
+            # Wait until the music finishes playing
+            while pygame.mixer.music.get_busy():
+                pygame.time.Clock().tick(10)
+
+            # Explicitly stop the music to release the file handle
+            pygame.mixer.music.stop()
+
+            # Add a small delay to ensure the file is fully released
+            time.sleep(0.5)
+
+        finally:
+            # Clean up the temporary audio file after playback
+            if os.path.exists(temp_file_path):
+                try:
+                    os.remove(temp_file_path)
+                except PermissionError:
+                    print(f"Could not delete the file {temp_file_path} due to permission error.")
+                    # If the file is still in use, try again after a small delay
+                    time.sleep(1)
+                    try:
+                        os.remove(temp_file_path)
+                    except Exception as e:
+                        print(f"Error deleting file: {e}")
+
+    # Run the speak function in a separate thread to avoid blocking the main thread
     threading.Thread(target=_speak).start()
 
 # def speak(text):
