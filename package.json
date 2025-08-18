@@ -1,0 +1,14 @@
+{
+  "name": "buddy-ai-backend",
+  "version": "1.0.0",
+  "description": "Buddy AI Backend API",
+  "main": "api.py",
+  "scripts": {
+    "start": "python api.py",
+    "dev": "python api.py"
+  },
+  "dependencies": {},
+  "engines": {
+    "python": "3.11"
+  }
+}
