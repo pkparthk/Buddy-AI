@@ -1,0 +1,5 @@
+# Render Deployment Configuration
+# This file tells Render how to build and start your Python app
+
+build: pip install -r requirements.txt
+start: python api.py

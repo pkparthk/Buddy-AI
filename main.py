@@ -9,6 +9,8 @@ import threading  # Import the threading module
 import pygame
 import tempfile
 import time
+import platform
+from enhanced_commands import buddy_processor 
 
 chatStr = ""  # Initialize the global chat string
 
@@ -18,12 +20,28 @@ chatStr = ""  # Initialize the global chat string
 # Define a lock to prevent multiple threads from executing runAndWait at the same time
 speech_lock = threading.Lock()
 
+# Global flag to control speech functionality
+ENABLE_SPEECH = True
+
+def set_speech_enabled(enabled):
+    """
+    Enable or disable speech functionality (useful for deployment environments)
+    """
+    global ENABLE_SPEECH
+    ENABLE_SPEECH = enabled
+
 def speak(text):
     """
     Uses gTTS (Google Text-to-Speech) for text-to-speech functionality.
-    This method speaks the entire response asynchronously.
+    This method speaks the entire response asynchronously with improved error handling.
     """
+    # If speech is disabled (e.g., in deployment), just print the text
+    if not ENABLE_SPEECH:
+        print(f"Buddy AI: {text}")
+        return
+    
     def _speak():
+        temp_file_path = None
         try:
             # Generate speech using gTTS
             tts = gTTS(text=text, lang='en')
@@ -33,39 +51,79 @@ def speak(text):
                 temp_file_path = temp_file.name
                 tts.save(temp_file_path)  # Save the speech to a temporary file
 
-            # Initialize pygame mixer
-            pygame.mixer.init()
+            # Initialize pygame mixer with better error handling
+            try:
+                # Quit any existing mixer instance first
+                pygame.mixer.quit()
+                time.sleep(0.1)  # Brief pause
+                
+                # Initialize with specific parameters for better compatibility
+                pygame.mixer.pre_init(frequency=22050, size=-16, channels=2, buffer=512)
+                pygame.mixer.init()
+                
+                # Load and play the audio file
+                pygame.mixer.music.load(temp_file_path)
+                pygame.mixer.music.play()
 
-            # Load and play the audio file
-            pygame.mixer.music.load(temp_file_path)
-            pygame.mixer.music.play()
-
-            # Wait until the music finishes playing
-            while pygame.mixer.music.get_busy():
-                pygame.time.Clock().tick(10)
-
-            # Explicitly stop the music to release the file handle
-            pygame.mixer.music.stop()
-
-            # Add a small delay to ensure the file is fully released
-            time.sleep(0.5)
-
+                # Wait until the music finishes playing
+                while pygame.mixer.music.get_busy():
+                    pygame.time.Clock().tick(10)
+                    
+            except pygame.error as pe:
+                print(f"Pygame error: {pe}")
+                # Fallback: just print the text if audio fails
+                print(f"Audio failed, text output: {text}")
+                
+        except Exception as e:
+            print(f"Error in speech synthesis: {e}")
+            # Fallback: just print the text
+            print(f"Speech synthesis failed, text output: {text}")
         finally:
             # Clean up the temporary audio file after playback
-            if os.path.exists(temp_file_path):
-                try:
-                    os.remove(temp_file_path)
-                except PermissionError:
-                    print(f"Could not delete the file {temp_file_path} due to permission error.")
-                    # If the file is still in use, try again after a small delay
-                    time.sleep(1)
-                    try:
-                        os.remove(temp_file_path)
-                    except Exception as e:
-                        print(f"Error deleting file: {e}")
+            cleanup_temp_file(temp_file_path)
 
     # Run the speak function in a separate thread to avoid blocking the main thread
-    threading.Thread(target=_speak).start()
+    threading.Thread(target=_speak, daemon=True).start()
+
+def cleanup_temp_file(file_path):
+    """
+    Improved temporary file cleanup with multiple retry attempts and better error handling
+    """
+    if not file_path or not os.path.exists(file_path):
+        return
+    
+    # Stop pygame mixer completely to release file handles
+    try:
+        if pygame.mixer.get_init():  # Check if mixer is initialized
+            pygame.mixer.music.stop()
+            pygame.mixer.music.unload()  # Unload the music to release file handle
+            pygame.mixer.quit()
+        time.sleep(0.5)  # Give time for file handles to be released
+    except Exception as cleanup_error:
+        print(f"Error during pygame cleanup: {cleanup_error}")
+    
+    # Multiple attempts to delete the file
+    max_attempts = 5
+    for attempt in range(max_attempts):
+        try:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                return  # Successfully deleted
+        except PermissionError:
+            if attempt < max_attempts - 1:
+                time.sleep(0.5 * (attempt + 1))  # Increasing delay
+            else:
+                # As a last resort, try to schedule deletion on next reboot (Windows)
+                try:
+                    import platform
+                    if platform.system() == "Windows":
+                        os.system(f'echo del "{file_path}" >> %TEMP%\\cleanup_temp_files.bat')
+                except:
+                    pass
+                print(f"Could not delete temp file {file_path} after {max_attempts} attempts")
+        except Exception as e:
+            print(f"Error deleting file {file_path}: {e}")
+            break
 
 # def speak(text):
 #     """
@@ -152,43 +210,40 @@ def takeCommand():
 
 def process_query(query):
     """
-    Processes each query and executes the corresponding task.
+    Enhanced query processing using Buddy AI intelligence.
     """
-    if 'open' in query:
-        # Check if the query is a command to open a website
-        sites = [["youtube", "https://www.youtube.com"], ["wikipedia", "https://www.wikipedia.com"], ["google", "https://www.google.com"]]
-        for site in sites:
-            if f"open {site[0]}" in query.lower():  # Case-insensitive matching
-                speak(f"Opening {site[0]} sir...")
-                webbrowser.open(site[1])
-                return "Opening website..."  # Return a response here
-    
-    elif "the time" in query:
-        # Check for time query
-        hour = datetime.datetime.now().strftime("%H")
-        minute = datetime.datetime.now().strftime("%M")
-        speak(f"Sir, the time is {hour} hours and {minute} minutes.")
-        return f"The time is {hour}:{minute}"  # Return the time as a string
-    
-    elif "buddy quit" in query:
+    # Special commands that should be handled directly
+    if "buddy quit" in query.lower():
         speak("Goodbye!")
         exit()
     
-    elif "reset chat" in query:
+    elif "reset chat" in query.lower():
         global chatStr
         chatStr = ""
         speak("Chat has been reset.")
         return "Chat has been reset."
     
-    elif "shutdown" in query or "exit" in query:
+    elif any(word in query.lower() for word in ["shutdown", "exit"]):
         speak("Shutting down now. Goodbye!")
         print("Shutting down...")
         exit()
     
-    else:
-        # For other queries, chat with Gemini AI
-        print("Chatting with Buddy AI...")
-        return chat(query)  # Make sure chat returns a response
+    # Use enhanced command processor for all other queries
+    try:
+        result = buddy_processor.process_command(query)
+        
+        if result['success']:
+            speak(result['message'])
+            return result['message']
+        else:
+            # If command processing fails, fall back to AI chat
+            print("Falling back to AI chat...")
+            return chat(query)
+            
+    except Exception as e:
+        print(f"Error in command processing: {e}")
+        # Fall back to AI chat if there's an error
+        return chat(query)
 
 def start_listening():
     """

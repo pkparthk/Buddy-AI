@@ -1,14 +1,52 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from main import process_query  # Import the process_query function from main.py
+from main import process_query, set_speech_enabled  # Import the process_query function and speech control from main.py
 import os  # Import os to handle environment variables
 import logging  # For logging
 
 # Initialize the Flask application
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["http://localhost:5173", "https://buddy-ai-tfha.onrender.com"]}})
 
-# CORS(app, resources={r"/*": {"origins": "*"}})
+# Disable speech in production environment (audio doesn't work well in serverless)
+if os.environ.get('FLASK_ENV') == 'production':
+    set_speech_enabled(False)
+    print("Speech disabled for production environment")
+else:
+    set_speech_enabled(True)
+    print("Speech enabled for development environment")
+
+# Configure CORS for production and development
+if os.environ.get('FLASK_ENV') == 'production':
+    # Production CORS - Render + Vercel specific
+    allowed_origins = [
+        "https://buddy-ai-frontend.vercel.app",  # Update with your Vercel URL
+        "https://your-buddy-ai.vercel.app",      # Alternative Vercel URL
+        "http://localhost:5173",                 # Local development
+        "http://localhost:3000"                  # Alternative local
+    ]
+else:
+    # Development CORS
+    allowed_origins = ["http://localhost:5173", "http://localhost:3000"]
+
+CORS(app, resources={r"/*": {"origins": allowed_origins}})
+
+@app.route('/', methods=['GET'])
+def health_check():
+    """Health check endpoint for deployment platforms"""
+    return jsonify({
+        'status': 'healthy',
+        'message': 'Buddy AI Backend is running!',
+        'version': '1.0.0'
+    }), 200
+
+@app.route('/api/health', methods=['GET'])
+def api_health():
+    """API health check"""
+    return jsonify({
+        'api': 'healthy',
+        'gemini_configured': bool(os.environ.get('GEMINI_API_KEY')),
+        'features': ['chat', 'enhanced_commands', 'external_apis']
+    }), 200
 
 @app.route('/api/chat', methods=['POST', 'OPTIONS'])
 def handle_chat():
