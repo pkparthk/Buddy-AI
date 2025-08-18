@@ -26,22 +26,25 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-html, body, #root, .App {
+html,
+body,
+#root,
+.App {
   height: 100%;
   margin: 0;
   padding: 0;
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
@@ -51,22 +54,155 @@ code {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
 }
 
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 /* Ensure buttons and inputs are easily clickable on mobile */
 @media (max-width: 640px) {
-  button, input {
+  button,
+  input {
     min-height: 44px;
   }
 }
 
+/* Custom animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(180deg);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
+  }
+}
+
+@keyframes slide-in-from-top-5 {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-bottom-5 {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.slide-in-from-top-5 {
+  animation: slide-in-from-top-5 0.3s ease-out;
+}
+
+.slide-in-from-bottom-5 {
+  animation: slide-in-from-bottom-5 0.5s ease-out;
+}
+
+/* Glass morphism effect */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Gradient text animation */
+@keyframes gradient-x {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 3s ease infinite;
+}
+
+/* Enhanced focus styles */
+.focus-enhanced:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  transform: scale(1.02);
+}
+
+/* Mobile responsiveness improvements */
+@media (max-width: 768px) {
+  .mobile-responsive {
+    font-size: 0.875rem;
+    padding: 0.75rem;
+  }
+}
+
+/* When mobile sidebar is open, mask the body background and ensure sidebar covers safe areas */
+.mobile-sidebar-open {
+  background-color: rgba(0, 0, 0, 1) !important;
+}
+
+/* Force sidebar to include safe-area insets on modern devices */
+.safe-area-full {
+  position: fixed !important;
+  top: env(safe-area-inset-top, 0) !important;
+  left: env(safe-area-inset-left, 0) !important;
+  right: env(safe-area-inset-right, 0) !important;
+  bottom: env(safe-area-inset-bottom, 0) !important;
+  width: calc(
+    100vw + env(safe-area-inset-left, 0) + env(safe-area-inset-right, 0)
+  ) !important;
+  height: calc(
+    100vh + env(safe-area-inset-top, 0) + env(safe-area-inset-bottom, 0)
+  ) !important;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .high-contrast {
+    border: 2px solid white;
+    background: black;
+    color: white;
+  }
+}

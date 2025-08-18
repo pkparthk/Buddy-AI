@@ -15,6 +15,6 @@ const ScrollArea = forwardRef<HTMLDivElement, ScrollAreaProps>(
   }
 );
 
-ScrollArea.displayName = "ScrollArea"; // Helps with debugging in React DevTools
+ScrollArea.displayName = "ScrollArea"; 
 
 export { ScrollArea };
