@@ -1,4 +1,247 @@
-venv
+# =================================
+# Buddy AI Project - .gitignore
+# =================================
 
-
+# Environment Variables (IMPORTANT: Never commit API keys!)
 .env
+.env.example
+.env.local
+.env.production.local
+.env.development.local
+
+# =================================
+# Python
+# =================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# =================================
+# Node.js / React Frontend
+# =================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Build outputs
+my-app/dist/
+my-app/build/
+my-app/.next/
+my-app/out/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# =================================
+# IDE and Editor Files
+# =================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# =================================
+# Operating System Files
+# =================================
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# =================================
+# Logs and Temporary Files
+# =================================
+*.log
+logs/
+pids/
+lib-cov/
+coverage/
+.nyc_output/
+.grunt/
+bower_components/
+.lock-wscript/
+.wafpickle-*
+.task/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# =================================
+# Audio/Media Files (Generated)
+# =================================
+*.mp3
+*.wav
+*.m4a
+*.aac
+*.ogg
+*.flac
+
+# Large video files
+*.mp4
+*.avi
+*.mov
+*.wmv
+
+# =================================
+# AI Generated Files
+# =================================
+Gemini/
+*.ai-generated
+*.gpt-cache
+
+# =================================
+# Database Files
+# =================================
+*.db
+*.sqlite
+*.sqlite3
+
+# =================================
+# Jupyter Notebook
+# =================================
+.ipynb_checkpoints/
+
+# =================================
+# mypy
+# =================================
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# =================================
+# Deployment and Build Files
+# =================================
+# Docker
+.dockerignore
+
+# Heroku
+.slugignore
+
+# Vercel
+.vercel/
+
+# Netlify
+.netlify/
+
+# =================================
+# Secrets and Config (IMPORTANT!)
+# =================================
+# Never commit these!
+config.json
+secrets.json
+*.key
+*.pem
+*.p12
+*.pfx
+
+# =================================
+# Backup files
+# =================================
+*.bak
+*.backup
+*.old
+*.orig
