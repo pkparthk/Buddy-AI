@@ -19,7 +19,7 @@ else:
 if os.environ.get('FLASK_ENV') == 'production':
     # Production CORS - Render + Vercel specific
     allowed_origins = [
-        "https://buddy-ai-frontend.vercel.app",  # Update with your Vercel URL
+        "https://buddy-ai-puce.vercel.app",      # Your actual Vercel URL        
         "https://your-buddy-ai.vercel.app",      # Alternative Vercel URL
         "http://localhost:5173",                 # Local development
         "http://localhost:3000"                  # Alternative local
