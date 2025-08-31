@@ -326,16 +326,16 @@ const BuddyAI: React.FC = () => {
 
   return (
     <div
-      className={`flex h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden relative ${
+      className={`flex h-screen theme-background overflow-hidden relative ${
         isResizing ? "cursor-col-resize" : ""
       }`}
     >
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -inset-10 opacity-30">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/30 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute bottom-1/4 left-1/2 w-96 h-96 bg-cyan-500/30 rounded-full blur-3xl animate-pulse delay-2000"></div>
-          <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-pink-500/20 rounded-full blur-2xl animate-bounce duration-3000"></div>
+        <div className="absolute -inset-10 opacity-20">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-400/30 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute bottom-1/4 left-1/2 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
+          <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-pink-500/10 rounded-full blur-2xl animate-bounce duration-3000"></div>
         </div>
 
         <div className="absolute inset-0">
@@ -370,8 +370,8 @@ const BuddyAI: React.FC = () => {
             : "z-10"
         } ${isMobile && !sidebarOpen ? "-translate-x-full" : "translate-x-0"} ${
           isMobile ? "w-full" : ""
-        } bg-black/60 backdrop-blur-xl text-white p-3 md:p-4 ${
-          isMobile ? "" : "border-r border-white/20"
+        } theme-sidebar text-white p-3 md:p-4 ${
+          isMobile ? "" : "border-r theme-border"
         } shadow-2xl transition-all duration-300`}
         style={
           !isMobile
@@ -473,13 +473,13 @@ const BuddyAI: React.FC = () => {
           <div
             className={`${
               isMobile ? "p-3" : "p-4"
-            } rounded-xl bg-gradient-to-r from-white/5 to-white/10 border border-white/10 backdrop-blur-sm`}
+            } rounded-xl theme-surface border theme-border`}
           >
             <div className="flex items-center justify-between">
               <span
                 className={`${
                   isMobile ? "text-xs" : "text-sm"
-                } text-gray-300 font-medium`}
+                } theme-text-muted font-medium`}
               >
                 Connection Status
               </span>
@@ -569,7 +569,7 @@ const BuddyAI: React.FC = () => {
       >
         {/* Enhanced Chat Header with mobile menu button */}
         <div
-          className={`bg-black/60 backdrop-blur-xl border-b border-white/20 ${
+          className={`theme-surface border-b theme-border ${
             isMobile ? "p-4" : "p-5"
           } shadow-xl`}
         >
@@ -684,10 +684,10 @@ const BuddyAI: React.FC = () => {
                       isMobile
                         ? "max-w-[85%] px-4 py-3 text-sm"
                         : "max-w-xs lg:max-w-2xl px-6 py-4"
-                    } rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
+                    } chat-bubble shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
                       message.role === "user"
-                        ? "bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white ml-auto border border-blue-500/30"
-                        : "bg-black/60 backdrop-blur-xl text-white mr-auto border border-white/20 bg-gradient-to-r from-gray-800/50 to-gray-900/50"
+                        ? "chat-bubble-user theme-text-primary ml-auto border theme-border"
+                        : "chat-bubble-ai theme-text-primary mr-auto border theme-border"
                     }`}
                   >
                     <div
@@ -728,9 +728,9 @@ const BuddyAI: React.FC = () => {
             {isTyping && (
               <div className="flex justify-start animate-in slide-in-from-bottom-5 duration-300">
                 <div
-                  className={`bg-black/60 backdrop-blur-xl text-white ${
+                  className={`chat-bubble-ai theme-text-primary ${
                     isMobile ? "px-4 py-3" : "px-6 py-4"
-                  } rounded-2xl mr-auto border border-white/20 shadow-xl bg-gradient-to-r from-gray-800/50 to-gray-900/50`}
+                  } mr-auto border theme-border shadow-xl`}
                 >
                   <div className="flex items-center space-x-3">
                     <div className="flex space-x-1">
@@ -768,7 +768,7 @@ const BuddyAI: React.FC = () => {
 
         {/* Enhanced Input Area with mobile optimization */}
         <div
-          className={`bg-black/50 backdrop-blur-xl border-t border-white/20 p-4 md:p-5 shadow-xl transition-all duration-300 ${
+          className={`theme-surface border-t theme-border p-4 md:p-5 shadow-xl transition-all duration-300 ${
             isMobile && sidebarOpen
               ? "translate-y-24 opacity-0 pointer-events-none"
               : ""
@@ -790,7 +790,7 @@ const BuddyAI: React.FC = () => {
                       ? "Ask me anything..."
                       : "Ask me anything... Try 'Open YouTube' or 'What time is it?'"
                   }
-                  className="bg-white/10 border-white/30 text-white placeholder-gray-400 pr-12 py-3 md:py-4 text-base md:text-sm rounded-xl backdrop-blur-sm focus:bg-white/15 focus:border-white/50 transition-all duration-300 shadow-lg hover:shadow-xl font-medium"
+                  className="theme-input pr-12 py-3 md:py-4 text-base md:text-sm transition-all duration-300 shadow-lg hover:shadow-xl font-medium"
                   onKeyPress={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
@@ -802,7 +802,7 @@ const BuddyAI: React.FC = () => {
                 {currentInput && (
                   <button
                     onClick={() => setCurrentInput("")}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors hover:scale-110 transition-transform"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 theme-text-muted hover:theme-text-primary transition-colors hover:scale-110 transition-transform"
                   >
                     ✕
                   </button>
@@ -817,9 +817,9 @@ const BuddyAI: React.FC = () => {
                 <Button
                   onClick={() => handleSubmit()}
                   disabled={isTyping || !currentInput.trim()}
-                  className={`bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 text-white ${
+                  className={`theme-btn-primary ${
                     isMobile ? "flex-1 px-6" : "px-8"
-                  } py-3 md:py-4 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none font-semibold`}
+                  } py-3 md:py-4 shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none`}
                 >
                   {isTyping ? (
                     <div className="w-4 md:w-5 h-4 md:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -836,10 +836,10 @@ const BuddyAI: React.FC = () => {
                   variant="outline"
                   className={`${
                     isMobile ? "flex-1 px-6" : "px-6"
-                  } py-3 md:py-4 rounded-xl transition-all duration-300 transform hover:scale-105 font-semibold ${
+                  } py-3 md:py-4 transition-all duration-300 transform hover:scale-105 ${
                     isListening
                       ? "bg-red-500 hover:bg-red-600 text-white border-red-500 shadow-lg shadow-red-500/25 animate-pulse"
-                      : "bg-white/10 hover:bg-white/20 text-white border-white/30 backdrop-blur-sm hover:shadow-xl"
+                      : "theme-btn-secondary"
                   }`}
                 >
                   {isListening ? (

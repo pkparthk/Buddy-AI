@@ -15,11 +15,11 @@ export const Input: React.FC<InputProps> = ({
 
   const variantStyles = {
     default:
-      "border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 bg-white text-black dark:bg-gray-800 dark:text-white focus:border-blue-500",
+      "theme-input focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50",
     outline:
-      "border-2 border-gray-300 bg-transparent focus:border-blue-500 focus:shadow-lg",
+      "border-2 theme-border bg-transparent focus:border-blue-500 focus:shadow-lg",
     filled:
-      "bg-gray-100 border-transparent focus:bg-white focus:shadow-lg focus:ring-2 focus:ring-blue-500",
+      "theme-surface border-transparent focus:bg-white focus:shadow-lg focus:ring-2 focus:ring-blue-500",
     glass:
       "backdrop-blur-sm bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:bg-white/20 focus:border-white/40 focus:shadow-xl",
   };

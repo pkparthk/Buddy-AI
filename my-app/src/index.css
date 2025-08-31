@@ -3,27 +3,36 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  /* Electric & Focused Theme Colors */
+  --background: #120f1a;
+  --surface: #1b1726;
+  --accent: #7df9ff; /* Electric Blue */
+  --primary-text: #eae8f1;
+  --muted-text: #6b6380;
+  --border-color: #2a253a;
+
+  /* Legacy variables for compatibility */
+  --foreground-rgb: 234, 232, 241;
+  --background-start-rgb: 18, 15, 26;
+  --background-end-rgb: 18, 15, 26;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: 234, 232, 241;
+    --background-start-rgb: 18, 15, 26;
+    --background-end-rgb: 18, 15, 26;
   }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: var(--background);
+  color: var(--primary-text);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html,
@@ -35,37 +44,29 @@ body,
   padding: 0;
 }
 
-body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
-/* Custom scrollbar styles */
+/* Custom scrollbar styles with Electric Theme */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--surface);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--border-color);
   border-radius: 4px;
   transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--accent);
 }
 
 /* Ensure buttons and inputs are easily clickable on mobile */
@@ -163,10 +164,10 @@ code {
   animation: gradient-x 3s ease infinite;
 }
 
-/* Enhanced focus styles */
+/* Enhanced focus styles with Electric Theme */
 .focus-enhanced:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 0 3px rgba(125, 249, 255, 0.3);
   transform: scale(1.02);
 }
 
@@ -205,4 +206,101 @@ code {
     background: black;
     color: white;
   }
+}
+
+/* Electric & Focused Theme Components */
+
+/* Main Layout */
+.theme-sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border-color);
+}
+
+/* Chat Bubbles */
+.chat-bubble {
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+}
+
+.chat-bubble-user {
+  background: var(--surface);
+}
+
+.chat-bubble-ai {
+  background: #16131f;
+}
+
+/* Interactive Elements */
+.theme-input {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  color: var(--primary-text);
+  border-radius: 12px;
+}
+
+.theme-input::placeholder {
+  color: var(--muted-text);
+}
+
+.theme-input:focus {
+  box-shadow: 0 0 0 3px rgba(125, 249, 255, 0.3);
+  border-color: var(--accent);
+}
+
+/* Primary Button (Send) */
+.theme-btn-primary {
+  background: var(--accent);
+  color: var(--background);
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.theme-btn-primary:hover {
+  background: #6be8f0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(125, 249, 255, 0.3);
+}
+
+/* Secondary Button (Voice) */
+.theme-btn-secondary {
+  background: transparent;
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.theme-btn-secondary:hover {
+  background: var(--accent);
+  color: var(--background);
+}
+
+/* Surface backgrounds */
+.theme-surface {
+  background: var(--surface);
+}
+
+.theme-background {
+  background: var(--background);
+}
+
+/* Text colors */
+.theme-text-primary {
+  color: var(--primary-text);
+}
+
+.theme-text-muted {
+  color: var(--muted-text);
+}
+
+.theme-text-accent {
+  color: var(--accent);
+}
+
+/* Border colors */
+.theme-border {
+  border-color: var(--border-color);
 }
